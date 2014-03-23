@@ -89,15 +89,17 @@ class Mailgun
 	 * @param  Closure|string $callback
 	 * @return object Mailgun response containing http_response_body and http_response_code
 	 */
-	public function send($view, array $data, $callback, $mustInit = true)
+	public function send($view, array $data, $callback, $domain = false, $mustInit = true)
 	{
 		if ($mustInit) $this->_init();
+
+		if (!$domain) $domain = Config::get('mailgun::domain');
 
 		$this->callMessageBuilder($callback, $this->message);
 
 		$this->getMessage($view, $data);
 
-		return $this->mailgun->sendMessage(Config::get('mailgun::domain'), $this->getMessageData(), $this->getAttachmentData());
+		return $this->mailgun->sendMessage($domain, $this->getMessageData(), $this->getAttachmentData());
 	}
 
 	/**
